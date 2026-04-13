@@ -15,7 +15,7 @@ pipeline {
 
         stage('Build Image') {
             steps {
-                sh 'docker build -t $IMAGE .'
+                bat 'docker build -t %IMAGE% .'
             }
         }
 
@@ -23,23 +23,23 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-creds',
-                    usernameVariable: 'lubba',
-                    passwordVariable: 'Levi@7034'
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS'
                 )]) {
-                    sh 'echo $PASS | docker login -u $USER --password-stdin'
+                    bat 'echo %PASS% | docker login -u %USER% --password-stdin'
                 }
             }
         }
 
         stage('Push Image') {
             steps {
-                sh 'docker push $IMAGE'
+                bat 'docker push %IMAGE%'
             }
         }
 
         stage('Deploy') {
             steps {
-                sh 'kubectl apply -f deployment.yml'
+                bat 'kubectl apply -f deployment.yml'
             }
         }
     }
